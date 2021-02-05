@@ -61,7 +61,7 @@
     #swiper {
         width: 100%;
         height: 14rem;
-        background-color: red;
+        background-color: transparent;
     }
 
     #swiper img{

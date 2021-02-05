@@ -4,7 +4,6 @@ import Vue from 'vue'
 import { Tabbar, TabbarItem } from 'vant';
 Vue.use(Tabbar).use(TabbarItem);
 
-/*
 // 2. Loading
 import { Loading } from 'vant';
 Vue.use(Loading);
@@ -13,7 +12,7 @@ Vue.use(Loading);
 import { Image } from 'vant';
 Vue.use(Image);
 
-// 4. 提示
+/*// 4. 提示
 import { Toast } from 'vant';
 Vue.use(Toast);
 
