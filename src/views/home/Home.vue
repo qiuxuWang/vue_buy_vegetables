@@ -51,7 +51,7 @@
                 flash_sale_product_list: [],
                 //猜你喜欢
                 you_like_product_list: [],
-                //是否显示加载图表
+                //是否显示加载图标
                 showLoading: true,
                 //是否显示返回顶部按钮
                 showBackStatus: false

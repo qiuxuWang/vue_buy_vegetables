@@ -20,6 +20,9 @@ import '@/plugins/vant'
 //4. 引入rem
 import '@/config/rem'
 
+//5. 引入全局过滤器
+import '@/config/filters'
+
 new Vue({
     router,
     render: h => h(App)
