@@ -57,13 +57,13 @@ export const getStyle = (element, attr, NumberMode = 'int') => {
     // scrollTop 获取方式不同，没有它不属于style，而且只有document.body才能用
     if (attr === 'scrollTop') {
         target = element.scrollTop;
-    }else if(element.currentStyle){
+    } else if (element.currentStyle) {
         target = element.currentStyle[attr];
-    }else{
-        target = document.defaultView.getComputedStyle(element,null)[attr];
+    } else {
+        target = document.defaultView.getComputedStyle(element, null)[attr];
     }
     //在获取 opactiy 时需要获取小数 parseFloat
-    return  NumberMode === 'float' ? parseFloat(target) : parseInt(target);
+    return NumberMode === 'float' ? parseFloat(target) : parseInt(target);
 };
 
 
@@ -81,7 +81,7 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
     if (duration instanceof Function) {
         callback = duration;
         duration = 400;
-    }else if(duration instanceof String){
+    } else if (duration instanceof String) {
         mode = duration;
         duration = 400;
     }
@@ -110,7 +110,7 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
     Object.keys(target).forEach(attr => {
         if (/[^\d^\.]+/gi.test(target[attr])) {
             unit[attr] = target[attr].match(/[^\d^\.]+/gi)[0] || 'px';
-        }else{
+        } else {
             unit[attr] = 'px';
         }
         initState[attr] = attrStyle(attr);
@@ -119,8 +119,8 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
     //去掉传入的后缀单位
     Object.keys(target).forEach(attr => {
         if (unit[attr] === 'rem') {
-            target[attr] = Math.ceil(parseInt(target[attr])*rootSize);
-        }else{
+            target[attr] = Math.ceil(parseInt(target[attr]) * rootSize);
+        } else {
             target[attr] = parseInt(target[attr]);
         }
     });
@@ -135,30 +135,30 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
             let iCurrent = attrStyle(attr) || 0; //当前元素属性址
             let speedBase = 0; //目标点需要减去的基础值，三种运动状态的值都不同
             let intervalTime; //将目标值分为多少步执行，数值越大，步长越小，运动时间越长
-            switch(mode){
+            switch (mode) {
                 case 'ease-out':
                     speedBase = iCurrent;
-                    intervalTime = duration*5/400;
+                    intervalTime = duration * 5 / 400;
                     break;
                 case 'linear':
                     speedBase = initState[attr];
-                    intervalTime = duration*20/400;
+                    intervalTime = duration * 20 / 400;
                     break;
                 case 'ease-in':
                     let oldspeed = remberSpeed[attr] || 0;
-                    iSpeed = oldspeed + (target[attr] - initState[attr])/duration;
+                    iSpeed = oldspeed + (target[attr] - initState[attr]) / duration;
                     remberSpeed[attr] = iSpeed;
                     break;
                 default:
                     speedBase = iCurrent;
-                    intervalTime = duration*5/400;
+                    intervalTime = duration * 5 / 400;
             }
             if (mode !== 'ease-in') {
                 iSpeed = (target[attr] - speedBase) / intervalTime;
                 iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
             }
             //判断是否达步长之内的误差距离，如果到达说明到达目标点
-            switch(mode){
+            switch (mode) {
                 case 'ease-out':
                     status = iCurrent !== target[attr];
                     break;
@@ -180,7 +180,7 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
                     element.style.opacity = (iCurrent + iSpeed) / 100;
                 } else if (attr === 'scrollTop') {
                     element.scrollTop = iCurrent + iSpeed;
-                }else{
+                } else {
                     element.style[attr] = iCurrent + iSpeed + 'px';
                 }
             } else {
@@ -195,4 +195,30 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
             }
         })
     }, 20);
+};
+
+/*
+  本地化存储
+* */
+export const setStore = (name, content) => {
+    if (!name) return;
+    if (typeof content !== 'string') {
+        content = JSON.stringify(content);
+    }
+    window.localStorage.setItem(name, content);
+
+};
+/*
+  本地化获取
+* */
+export const getStore = (name) => {
+    if (!name) return;
+    return window.localStorage.getItem(name);
+};
+/*
+  本地化删除
+* */
+export const removeStore = (name) => {
+    if (!name) return;
+    return window.localStorage.removeItem(name);
 };

@@ -9,6 +9,9 @@ const Category = () => import('./../views/category/Category.vue');
 const Cart = () => import('./../views/cart/Cart.vue');
 const Mine = () => import('./../views/mine/Mine.vue');
 
+// 引入组件相关
+const Order = () => import('./../views/order/Order');
+
 Vue.use(Router);
 
 export default new Router({
@@ -26,5 +29,6 @@ export default new Router({
                 {path: 'mine', name: 'mine', component: Mine},
             ]
         },
+        {path: '/confirmOrder', name: 'order', component: Order}
     ]
 })

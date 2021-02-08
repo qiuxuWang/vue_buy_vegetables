@@ -12,7 +12,7 @@ Vue.use(Loading);
 import { Image } from 'vant';
 Vue.use(Image);
 
-/*// 4. 提示
+// 4. 提示
 import { Toast } from 'vant';
 Vue.use(Toast);
 
@@ -60,4 +60,4 @@ Vue.use(Card);
 
 // 14. 选项卡
 import { Tab, Tabs } from 'vant';
-Vue.use(Tab).use(Tabs);*/
+Vue.use(Tab).use(Tabs);

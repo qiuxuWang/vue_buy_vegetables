@@ -44,6 +44,13 @@
     //3. 引入接口
     import {getCategories, getCategoriesDetail} from './../../service/api/index'
 
+    //4. 引入通知插件
+    import PubSub from 'pubsub-js'
+    import {Toast} from 'vant'
+
+    //5. 引入vuex
+    import {mapMutations} from 'vuex'
+
     export default {
         name: "Category",
         data() {
@@ -61,11 +68,31 @@
         created() {
             this.initData();
         },
+        mounted() {
+            //订阅消息(添加到购物车的消息)
+            PubSub.subscribe('categoryAddToCart', (msg, goods) => {
+                if (msg === 'categoryAddToCart') {
+                    this.ADD_GOODS({
+                        goodsId: goods.id,
+                        goodsName: goods.name,
+                        smallImage: goods.small_image,
+                        goodsPrice: goods.price
+                    });
+                    //提示用户
+                    Toast({
+                        message: '添加到购物车成功！',
+                        duration: 800
+                    });
+                }
+            })
+        },
         components: {
             Header,
             ContentView,
         },
         methods: {
+            //声明ADD_GOODS是个函数
+            ...mapMutations(["ADD_GOODS"]),
             //初始化数据和界面
             async initData() {
                 //1. 获取左边的数据

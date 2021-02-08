@@ -9,7 +9,7 @@
                 <span>分类</span>
                 <img slot="icon" slot-scope="props" :src="props.active ? category_icon.active : category_icon.normal"/>
             </van-tabbar-item>
-            <van-tabbar-item replace to="/dashboard/cart">
+            <van-tabbar-item replace to="/dashboard/cart" :badge="goodsNum > 0 ? goodsNum : ''">
                 <span>购物车</span>
                 <img slot="icon" slot-scope="props" :src="props.active ? cart_icon.active : cart_icon.normal"/>
             </van-tabbar-item>
@@ -27,6 +27,8 @@
 </template>
 
 <script>
+    import {mapState, mapMutations} from 'vuex'
+
     export default {
         name: "DashBoard",
         data() {
@@ -56,6 +58,28 @@
                 //缓存到本地
                 sessionStorage.setItem('tabBarActiveIndex', value);
             }
+        },
+        computed: {
+            ...mapState(['shopCart']),
+            goodsNum() {
+                if (this.shopCart) {
+                    //总购物车商品数量
+                    let num = 0;
+                    Object.values(this.shopCart).forEach((goods, index) => {
+                        num += goods.num;
+                    });
+                    return num;
+                } else {
+                    return 0;
+                }
+            }
+        },
+        mounted() {
+            //1. 获取购物车的数据
+            this.INIT_SHOP_CART();
+        },
+        methods: {
+            ...mapMutations(['INIT_SHOP_CART'])
         }
     }
 </script>

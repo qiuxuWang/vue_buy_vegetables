@@ -38,6 +38,13 @@
     //3.引入处理返回顶部按钮函数
     import {showBack, animate} from './../../../src/config/global'
 
+    //4. 引入通知插件
+    import PubSub from 'pubsub-js'
+    import {Toast} from 'vant'
+
+    //5. 引入vuex
+    import {mapMutations} from 'vuex'
+
     export default {
         name: "Home",
 
@@ -82,6 +89,24 @@
                 console.log(error);
             })
         },
+        mounted() {
+            //订阅消息(添加到购物车的消息)
+            PubSub.subscribe('homeAddToCart', (msg, goods) => {
+                if (msg === 'homeAddToCart') {
+                    this.ADD_GOODS({
+                        goodsId: goods.id,
+                        goodsName: goods.name,
+                        smallImage: goods.small_image,
+                        goodsPrice: goods.price
+                    });
+                    //提示用户
+                    Toast({
+                        message: '添加到购物车成功！',
+                        duration: 800
+                    });
+                }
+            })
+        },
         components: {
             Header,
             Sowing,
@@ -91,6 +116,7 @@
             MarkPage
         },
         methods: {
+            ...mapMutations(["ADD_GOODS"]),
             //请求网络数据 promise->async+await
             /*async reqData() {
                 let res = await getHomeData();
