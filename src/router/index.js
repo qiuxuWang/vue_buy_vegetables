@@ -11,6 +11,9 @@ const Mine = () => import('./../views/mine/Mine.vue');
 
 // 引入组件相关
 const Order = () => import('./../views/order/Order');
+const MyAddress = () => import('./../views/order/children/MyAddress');
+const AddAddress = () => import('./../views/order/children/children/AddAddress');
+const EditAddress = () => import('./../views/order/children/children/EditAddress');
 
 Vue.use(Router);
 
@@ -29,6 +32,15 @@ export default new Router({
                 {path: 'mine', name: 'mine', component: Mine},
             ]
         },
-        {path: '/confirmOrder', name: 'order', component: Order}
+        {
+            path: '/confirmOrder', name: 'order', component: Order, children: [
+                {path: 'myAddress', name: 'MyAddress', component: MyAddress,children:[
+                        //添加地址
+                        {path:'addAddress',name:'addAddress',component:AddAddress},
+                        //编辑地址
+                        {path:'editAddress',name:'editAddress',component:EditAddress}
+                    ]}
+            ]
+        }
     ]
 })

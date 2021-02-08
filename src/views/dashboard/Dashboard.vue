@@ -9,7 +9,7 @@
                 <span>分类</span>
                 <img slot="icon" slot-scope="props" :src="props.active ? category_icon.active : category_icon.normal"/>
             </van-tabbar-item>
-            <van-tabbar-item replace to="/dashboard/cart" :badge="goodsNum > 0 ? goodsNum : ''">
+            <van-tabbar-item replace to="/dashboard/cart" :info="goodsNum > 0 ? goodsNum : ''">
                 <span>购物车</span>
                 <img slot="icon" slot-scope="props" :src="props.active ? cart_icon.active : cart_icon.normal"/>
             </van-tabbar-item>
