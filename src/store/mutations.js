@@ -4,9 +4,12 @@ import {
     REDUCE_CART,
     SELECTED_SINGLE_GOODS,
     SELECTED_All_GOODS,
-    CLEAR_CART
+    CLEAR_CART,
+    USER_INFO,
+    INIT_USER_INFO,
+    RESET_USER_INFO
 } from './mutations-type'
-import {getStore, setStore} from './../config/global'
+import {getStore, removeStore, setStore} from './../config/global'
 import Vue from 'vue'
 
 export default {
@@ -14,9 +17,9 @@ export default {
     [ADD_GOODS](state, {goodsId, goodsName, smallImage, goodsPrice}) {
         let shopCart = state.shopCart;
         //1.1 判断商品是否存在
-        if (shopCart[goodsId]) {
+        if (shopCart[goodsId]) { //存在
             shopCart[goodsId]['num']++;
-        } else {
+        } else { //不存在
             shopCart[goodsId] = {
                 "num": 1,
                 "id": goodsId,
@@ -98,5 +101,27 @@ export default {
         state.shopCart = {...state.shopCart};
         //6.1 同步数据
         setStore('shopCart', state.shopCart);
+    },
+
+    //7. 保存用户信息到本地
+    [USER_INFO](state, {userInfo}) {
+        state.userInfo = userInfo;
+        //同步到本地
+        setStore('userInfo', state.userInfo);
+    },
+
+    //8. 获取用户数据
+    [INIT_USER_INFO](state) {
+        //8.1 获取用户信息
+        let userInfo = getStore('userInfo');
+        if (userInfo) {
+            state.userInfo = JSON.parse(userInfo);
+        }
+    },
+
+    //9. 退出登录
+    [RESET_USER_INFO](state) {
+        state.userInfo = {};
+        removeStore('userInfo');
     }
 }

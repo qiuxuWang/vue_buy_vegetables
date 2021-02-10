@@ -134,6 +134,9 @@
                     this.categoriesDetail = rightRes.data.cate;
                 }
             }
+        },
+        beforeDestroy() { //销毁订阅
+            PubSub.unsubscribe('categoryAddToCart')
         }
     }
 </script>

@@ -144,7 +144,9 @@
                 let docB = document.documentElement || document.body;
                 animate(docB, {scrollTop: '0'}, 400, 'ease-out');
             }
-
+        },
+        beforeDestroy() { //销毁订阅
+            PubSub.unsubscribe('homeAddToCart')
         }
     }
 </script>

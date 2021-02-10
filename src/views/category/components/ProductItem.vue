@@ -66,6 +66,9 @@
             addToCart(goods) {
                 PubSub.publish('categoryAddToCart', goods);
             }
+        },
+        beforeDestroy() { //销毁订阅
+            PubSub.unsubscribe('categoryAddToCart')
         }
     }
 </script>

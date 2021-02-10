@@ -1,5 +1,5 @@
 <template>
-    <div id="cart">
+    <div id="cart" v-if="userInfo.token">
         <!--头部区域-->
         <header class="titleWrapper">
             <h4><strong>购物车</strong></h4>
@@ -51,16 +51,19 @@
             </div>
         </div>
     </div>
+    <SelectedLogin v-else />
+
 </template>
 
 <script>
     import {mapState, mapMutations} from 'vuex'
     import {Dialog, Toast} from 'vant';
+    import SelectedLogin from './../../views/login/SelectedLogin'
 
     export default {
         name: "Cart",
         computed: {
-            ...mapState(["shopCart"]),
+            ...mapState(["shopCart","userInfo"]),
             //选中商品的总件数
             goodsCount() {
                 let selectedGoodsCount = 0;
@@ -134,6 +137,9 @@
                     // do nothing
                 });
             }
+        },
+        components:{
+            SelectedLogin
         }
     }
 

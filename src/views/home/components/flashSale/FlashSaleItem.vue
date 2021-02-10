@@ -51,6 +51,9 @@
             addToCart(goods) {
                 PubSub.publish('homeAddToCart', goods);
             }
+        },
+        beforeDestroy() { //销毁订阅
+            PubSub.unsubscribe('homeAddToCart')
         }
     }
 </script>
