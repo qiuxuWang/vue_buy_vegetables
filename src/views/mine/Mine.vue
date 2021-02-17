@@ -8,11 +8,13 @@
         ></van-nav-bar>
 
         <van-cell-group style="margin-top: 2.6rem;">
-            <van-cell style="background-color: #2eba5a; color: #fff" is-link :center="true" @click="$router.push('/dashboard/mine/userCenter')">
+            <van-cell style="background-color: #2eba5a; color: #fff" is-link :center="true"
+                      @click="$router.push('/dashboard/mine/userCenter')">
                 <!-- 使用 title 插槽来自定义标题 -->
                 <template #title>
                     <div class="personMsg">
-                        <img src="./images/favicon.jpg"/>
+                        <img src="./images/xiaoliao.png"/>
+                        <!--<img :src="userInfo.icon_url"/>-->
                         <div class="personInfo">
                             <span>{{userInfo.real_name}}</span>
                             <span>手机号：{{userInfo.phone}}</span>
@@ -23,25 +25,33 @@
         </van-cell-group>
 
         <van-cell-group>
-            <van-cell icon="label" title="我的订单" value="查看所有的订单" is-link></van-cell>
-            <van-grid>
-                <van-grid-item v-for="(order, index) in orderData" :key="index" :icon="order.icon"
-                               :text="order.title"></van-grid-item>
-            </van-grid>
+            <van-cell icon="label" title="我的订单" value="查看所有的订单" is-link
+                      @click="$router.push('/dashboard/mine/MineOrder')"></van-cell>
+            <router-link tag="div" :to="'/dashboard/mine/userCenter'">
+                <van-grid>
+                    <van-grid-item
+                            v-for="(order, index) in orderData"
+                           :key="index"
+                           :icon="order.icon"
+                           :text="order.title"
+                    >
+                    </van-grid-item>
+                </van-grid>
+            </router-link>
         </van-cell-group>
 
         <van-cell-group style="margin-top: 0.6rem;">
-            <van-cell icon="gold-coin" title="我的优惠券" value="查看所有的订单" is-link></van-cell>
-            <van-cell icon="todo-list" title="我的收货地址" value="查看所有的订单" is-link></van-cell>
+            <van-cell icon="gold-coin" title="我的优惠券" value="" is-link></van-cell>
+            <van-cell icon="todo-list" title="我的收货地址" value="" is-link></van-cell>
         </van-cell-group>
 
         <van-cell-group style="margin-top: 0.6rem;">
-            <van-cell icon="phone" title="联系客服" value="查看所有的订单" is-link></van-cell>
-            <van-cell icon="smile-comment" title="意见反馈" value="查看所有的订单" is-link></van-cell>
+            <van-cell icon="phone" title="联系客服" value="" is-link></van-cell>
+            <van-cell icon="smile-comment" title="意见反馈" value="" is-link></van-cell>
         </van-cell-group>
 
         <van-cell-group style="margin-top: 0.6rem;">
-            <van-cell icon="gift-card" title="小撩买菜" value="查看所有的订单" is-link></van-cell>
+            <van-cell icon="gift-card" title="小撩买菜" value="" is-link></van-cell>
         </van-cell-group>
 
         <!--路由出口-->
@@ -49,12 +59,13 @@
             <router-view></router-view>
         </transition>
     </div>
-    <SelectedLogin v-else />
+    <SelectedLogin v-else/>
 </template>
 
 <script>
     import {mapState} from 'vuex'
     import SelectedLogin from './../../views/login/SelectedLogin'
+
 
     export default {
         name: "Mine",
@@ -68,11 +79,11 @@
                 ]
             }
         },
-        computed:{
+        computed: {
             ...mapState(["userInfo"])
         },
-        components:{
-            SelectedLogin
+        components: {
+            SelectedLogin,
         }
     }
 </script>
@@ -116,6 +127,7 @@
         color: #FAA509;
         font-size: 1.2rem;
     }
+
     /*转场动画*/
     .router-slider-enter-active, .router-slider-leave-active {
         transition: all 0.3s;

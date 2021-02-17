@@ -46,12 +46,12 @@
                     </div>
                 </div>
                 <div class="tabBarRight">
-                    <router-link tag="a" class="pay" :to="{path: '/confirmOrder'}">去结算({{goodsCount}})</router-link>
+                    <button class="pay" @click="toPay()">去结算({{goodsCount}})</button>
                 </div>
             </div>
         </div>
     </div>
-    <SelectedLogin v-else />
+    <SelectedLogin v-else/>
 
 </template>
 
@@ -59,11 +59,12 @@
     import {mapState, mapMutations} from 'vuex'
     import {Dialog, Toast} from 'vant';
     import SelectedLogin from './../../views/login/SelectedLogin'
+    import {changeCartNum, clearAllCart, singleGoodsSelect, allGoodsSelect} from './../../service/api'
 
     export default {
         name: "Cart",
         computed: {
-            ...mapState(["shopCart","userInfo"]),
+            ...mapState(["shopCart", "userInfo"]),
             //选中商品的总件数
             goodsCount() {
                 let selectedGoodsCount = 0;
@@ -100,45 +101,104 @@
         methods: {
             ...mapMutations(["REDUCE_CART", "ADD_GOODS", "SELECTED_SINGLE_GOODS", "SELECTED_All_GOODS", "CLEAR_CART"]),
             //1. 移出购物车
-            removeOutCart(goodsId, goodsNum) {
+            async removeOutCart(goodsId, goodsNum) {
                 if (goodsNum > 1) {
-                    this.REDUCE_CART({goodsId})
+                    let result = await changeCartNum(this.userInfo.token, goodsId, 'reduce');
+                    console.log(result);
+                    if (result.success_code === 200) { //修改成功
+                        this.REDUCE_CART({goodsId})
+                    } else {  //修改失败
+                        Toast({
+                            message: '出了点小问题哟！',
+                            duration: 500
+                        })
+                    }
                 } else if (goodsNum === 1) { //挽留
                     Dialog.confirm({
                         title: '温馨提示',
                         message: '确定删除该商品吗?'
-                    }).then(() => {
-                        this.REDUCE_CART({goodsId});
+                    }).then(async () => {
+                        let result = await changeCartNum(this.userInfo.token, goodsId, 'reduce');
+                        console.log(result);
+                        if (result.success_code === 200) { //修改成功
+                            this.REDUCE_CART({goodsId})
+                        } else {  //修改失败
+                            Toast({
+                                message: '出了点小问题哟！',
+                                duration: 500
+                            })
+                        }
                     }).catch(() => { // 点击了取消
                         // do nothing
                     });
                 }
             },
             //2. 增加商品
-            addToCart(goodsId, goodsName, smallImage, goodsPrice) {
-                this.ADD_GOODS({goodsId, goodsName, smallImage, goodsPrice})
+            async addToCart(goodsId, goodsName, smallImage, goodsPrice) {
+                let result = await changeCartNum(this.userInfo.token, goodsId, 'add');
+                console.log(result);
+                if (result.success_code === 200) { //修改成功
+                    this.ADD_GOODS({
+                        goodsId,
+                        goodsName,
+                        smallImage,
+                        goodsPrice
+                    })
+                } else {  //修改失败
+                    Toast({
+                        message: '出了点小问题哟！',
+                        duration: 500
+                    })
+                }
             },
             //3. 单个商品选中和取消选中
-            singleGoodsSelected(goodsId) {
-                this.SELECTED_SINGLE_GOODS({goodsId})
+            async singleGoodsSelected(goodsId) {
+                let result = await singleGoodsSelect(this.userInfo.token, goodsId);
+                if (result.success_code === 200) {
+                    this.SELECTED_SINGLE_GOODS({goodsId})
+                }
             },
             //4. 商品全选和取消全选
-            selectedAll(isSelected) {
-                this.SELECTED_All_GOODS({isSelected})
+            async selectedAll(isSelected) {
+                let result = await allGoodsSelect(this.userInfo.token, isSelected);
+                if (result.success_code === 200) {
+                    this.SELECTED_All_GOODS({isSelected})
+                }
             },
             //5. 清空购物车
             clearCart() {
                 Dialog.confirm({
                     title: '温馨提示',
                     message: '确定清空所有商品吗?'
-                }).then(() => {
-                    this.CLEAR_CART();
+                }).then(async () => {
+                    let result = await clearAllCart(this.userInfo.token);
+                    console.log(result);
+                    if (result.success_code === 200) { //清除成功
+                        this.CLEAR_CART();
+                    } else {  //清除失败
+                        Toast({
+                            message: '出了点小问题哟！',
+                            duration: 500
+                        })
+                    }
+
                 }).catch(() => { // 点击了取消
                     // do nothing
                 });
+            },
+            //6. 去支付
+            toPay() {
+                if (this.totalPrice > 0) {
+                    this.$router.push('/confirmOrder');
+                } else {
+                    Toast({
+                        message: '请先选择商品后再结算~',
+                        duration: 1000
+                    })
+                }
             }
         },
-        components:{
+        components: {
             SelectedLogin
         }
     }

@@ -43,7 +43,10 @@
     import {Toast} from 'vant'
 
     //5. 引入vuex
-    import {mapMutations} from 'vuex'
+    import {mapMutations, mapState} from 'vuex'
+
+    //6. 引入购物车接口
+    import {addGoodsToCart} from './../../service/api/index'
 
     export default {
         name: "Home",
@@ -89,21 +92,19 @@
                 console.log(error);
             })
         },
+        computed: {
+            ...mapState(['userInfo'])
+        },
         mounted() {
             //订阅消息(添加到购物车的消息)
             PubSub.subscribe('homeAddToCart', (msg, goods) => {
                 if (msg === 'homeAddToCart') {
-                    this.ADD_GOODS({
-                        goodsId: goods.id,
-                        goodsName: goods.name,
-                        smallImage: goods.small_image,
-                        goodsPrice: goods.price
-                    });
-                    //提示用户
-                    Toast({
-                        message: '添加到购物车成功！',
-                        duration: 800
-                    });
+                    //判断用户是否登录
+                    if (this.userInfo.token) {  //已经登录
+                        this.dealGoodsAdd(goods);
+                    } else {  //没有登陆
+                        this.$router.push('/login');
+                    }
                 }
             })
         },
@@ -143,7 +144,27 @@
             scrollToTop() {
                 let docB = document.documentElement || document.body;
                 animate(docB, {scrollTop: '0'}, 400, 'ease-out');
-            }
+            },
+
+            //添加商品到购物车
+            async dealGoodsAdd(goods) {
+                //调用服务器端接口
+                let result = await addGoodsToCart(this.userInfo.token, goods.id, goods.name, goods.price, goods.small_image);
+                // console.log(result);
+                if(result.success_code === 200){
+                    this.ADD_GOODS({
+                        goodsId: goods.id,
+                        goodsName: goods.name,
+                        smallImage: goods.small_image,
+                        goodsPrice: goods.price
+                    });
+                    //提示用户
+                    Toast({
+                        message: '添加到购物车成功！',
+                        duration: 800
+                    });
+                }
+            },
         },
         beforeDestroy() { //销毁订阅
             PubSub.unsubscribe('homeAddToCart')

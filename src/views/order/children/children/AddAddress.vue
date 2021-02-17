@@ -23,21 +23,48 @@
 
 <script>
     import {Toast} from 'vant'
+    import areaList from './../../../../config/area'
+    import {addUserAddress} from './../../../../service/api/index'
+    import {mapState} from 'vuex'
+    import PubSub from 'pubsub-js'
 
     export default {
         name: "AddAddress",
         data() {
             return {
-                areaList:{},
+                areaList: areaList,
                 searchResult: [],
             }
+        },
+        computed: {
+            ...mapState(['userInfo'])
         },
         methods: {
             onClickLeft() {
                 this.$router.go(-1);
             },
-            onSave() {
-                Toast('save');
+            //保存用户信息
+            async onSave(content) {
+                if (this.userInfo.token) {
+                    let result = await addUserAddress(this.userInfo.token, content.name, content.tel, content.province + content.city + content.county, content.addressDetail, content.postalCode, content.isDefault, content.province, content.city, content.county, content.areaCode);
+                    console.log(result);
+                    //判断
+                    if (result.success_code === 200) {
+                        Toast({
+                            message: '添加地址成功！',
+                            duration: 400
+                        });
+                        //返回上一页
+                        this.$router.back();
+                        //发起通知
+                        PubSub.publish('addOrEditAddressSuccess')
+                    } else {
+                        Toast({
+                            message: '添加地址失败！',
+                            duration: 400
+                        })
+                    }
+                }
             },
             onChangeDetail(val) {
                 if (val) {

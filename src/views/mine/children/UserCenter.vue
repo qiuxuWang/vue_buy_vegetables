@@ -22,15 +22,18 @@
     export default {
         name: "UserCenter",
         methods: {
-            ...mapMutations(["RESET_USER_INFO"]),
+            ...mapMutations(["RESET_USER_INFO", "CLEAR_CART"]),
             async logOut() {
                 let result = await getLogOut();
                 if (result.success_code === 200) {
+                    //清空本地数据
                     this.RESET_USER_INFO();
+                    //清空本地购物车数据
+                    this.CLEAR_CART();
                     Toast({
                         message: '退出登录成功！',
                         duration: 500
-                    })
+                    });
                 }
             }
         }

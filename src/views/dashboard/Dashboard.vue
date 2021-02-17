@@ -27,7 +27,9 @@
 </template>
 
 <script>
-    import {mapState, mapMutations,mapActions} from 'vuex'
+    import {mapState, mapMutations, mapActions} from 'vuex'
+    import {getGoodsCart} from './../../service/api/index'
+    import {setStore} from './../../config/global'
 
     export default {
         name: "DashBoard",
@@ -60,7 +62,7 @@
             }
         },
         computed: {
-            ...mapState(['shopCart']),
+            ...mapState(['shopCart', 'userInfo']),
             goodsNum() {
                 if (this.shopCart) {
                     //总购物车商品数量
@@ -79,11 +81,37 @@
             this.reqUserInfo();
 
             //2. 获取购物车的数据
-            this.INIT_SHOP_CART();
+            this.initShopCart();
         },
         methods: {
             ...mapMutations(['INIT_SHOP_CART']),
             ...mapActions(['reqUserInfo']),
+            async initShopCart() {
+                if (this.userInfo.token) {  //已经登录
+                    //获取当前用户购物车中的商品(从服务器端获取)
+                    let result = await getGoodsCart(this.userInfo.token);
+                    console.log(result);
+                    //如果获取成功
+                    if (result.success_code === 200) {
+                        let cartArr = result.data;
+                        let shopCart = {};
+                        //遍历
+                        cartArr.forEach((value) => {
+                            shopCart[value.goods_id] = {
+                                "num": value.num,
+                                "id": value.goods_id,
+                                "name": value.goods_name,
+                                "small_image": value.small_image,
+                                "price": value.goods_price,
+                                "checked": value.checked
+                            }
+                        });
+                        //本地数据同步
+                        setStore('shopCart', shopCart);
+                        this.INIT_SHOP_CART();
+                    }
+                }
+            }
         }
     }
 </script>

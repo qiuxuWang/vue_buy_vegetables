@@ -52,9 +52,9 @@
                 PubSub.publish('homeAddToCart', goods);
             }
         },
-        beforeDestroy() { //销毁订阅
+        /*beforeDestroy() { //销毁订阅
             PubSub.unsubscribe('homeAddToCart')
-        }
+        }*/
     }
 </script>
 
